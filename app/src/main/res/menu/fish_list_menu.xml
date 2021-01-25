@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <group android:id="@+id/app_bar_fish_list">
+
+        <item
+            android:id="@+id/app_bar_fish_list_start_learn"
+            android:title="@string/learn"
+            app:showAsAction="always" />
+
+        <item
+            android:id="@+id/app_bar_fish_list_home"
+            android:icon="@drawable/ic_baseline_home_24"
+            android:title="@string/home"
+            app:showAsAction="ifRoom" />
+
+        <item
+            android:id="@+id/app_bar_fish_list_statistics"
+            android:title="@string/statistics"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/app_bar_fish_list_rename"
+            android:title="@string/rename"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/app_bar_fish_list_delete"
+            android:icon="@drawable/ic_baseline_delete_forever_24"
+            android:title="@string/delete"
+            app:showAsAction="never" />
+
+    </group>
+
+</menu>

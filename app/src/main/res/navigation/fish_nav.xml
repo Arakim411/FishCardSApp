@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fish_nav"
+    app:startDestination="@id/fishCardListFragment">
+
+    <fragment
+        android:id="@+id/fishCardListFragment"
+        android:name="com.applications.fishcardroomandmvvm.fragments.FishCardListsFragment"
+        android:label="@string/my_lists"
+        tools:layout="@layout/fragment_fish_card_lists" >
+        <action
+            android:id="@+id/action_fishCardListFragment_to_addListFragment"
+            app:destination="@id/addListFragment" />
+        <action
+            android:id="@+id/action_fishCardListFragment_to_editFragment"
+            app:destination="@id/editFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addListFragment"
+        android:name="com.applications.fishcardroomandmvvm.fragments.AddListFragment"
+        android:label="@string/add_Fish_list_label"
+        tools:layout="@layout/fragment_add_list" >
+        <action
+            android:id="@+id/action_addListFragment_to_fishCardListFragment"
+            app:destination="@id/fishCardListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editFragment"
+        android:name="com.applications.fishcardroomandmvvm.fragments.EditFragment"
+        android:label="fragment3"
+        tools:layout="@layout/fragment_edit" >
+        <action
+            android:id="@+id/action_editFragment_to_fishCardListFragment"
+            app:destination="@id/fishCardListFragment" />
+    </fragment>
+</navigation>

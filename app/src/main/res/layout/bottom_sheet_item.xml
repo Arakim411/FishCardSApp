@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp">
+
+    <ImageView
+        android:id="@+id/bottomSheetItem_image"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        app:srcCompat="@drawable/ic_baseline_delete_forever_24"
+        app:tint="#B3000000"/>
+
+    <TextView
+        android:id="@+id/bottomSheetItem_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textColor="#B3000000"
+        android:textSize="16sp"
+        android:layout_marginLeft="32dp"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        tools:text = "EXAMPLEEE TEXT"/>
+
+
+
+
+</LinearLayout>
