@@ -47,8 +47,7 @@ abstract class Manager() {
         private val showWithTranslate = "show_with_translate"
         private val showDefValue = false
 
-        private val saveData =
-            "save_data" // defines whether user must tick that he know or don't know word
+        private val saveData = "save_data" // defines whether user must tick that he know or don't know word
         private val saveDefValue = false
 
         private val randomList = "random_list" // list is in order  or in random order

@@ -1,14 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".fragments.LearnWord.FragmentWordsOptions">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.applications.fishcardroomandmvvm.viewModels.FragmentOptionsViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Example" />
+        android:background="@color/activity_color"
+        android:padding="16dp">
 
-</FrameLayout>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/options"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_show_translation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:checked="@{viewModel.showWithTranslate}"
+            android:onCheckedChanged="@{(switch, checked) -> viewModel.setShowWithTranslate(checked)}"
+            android:text="Show Translation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_save_data"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="@{viewModel.saveData}"
+
+            android:onCheckedChanged="@{(switch, checked) -> viewModel.setSaveData(checked)}"
+            android:text="Lets you choose if you know the word"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_show_translation" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_random_list"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="@{viewModel.randomList}"
+            android:onCheckedChanged="@{(switch, checked) -> viewModel.setRandomList(checked)}"
+            android:text="Shuffle list"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_save_data" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_animations"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="@{viewModel.animationsOnOFF}"
+            android:onCheckedChanged="@{(switch, checked) -> viewModel.setAnimationsOnOFF(checked)}"
+            android:text="Animations on/off"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_random_list" />
+
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_show_statistics"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:checked="@{viewModel.showStatic}"
+            android:onCheckedChanged="@{(switch, checked) -> viewModel.setShowStatistics(checked)}"
+            android:text="Show Statistics"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/switch_animations" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -25,6 +25,7 @@ private const val TAG = "FishActivity"
 
 
 
+
 @Suppress("DEPRECATION")
 class FishListActivity : AppCompatActivity(), RenameDialog.UpdateListEvent, AppDialog.DialogEvents,
     BottomSheet.BottomSheetEvents {

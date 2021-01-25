@@ -20,6 +20,7 @@ import kotlinx.android.synthetic.main.activity_learn.*
 
 private const val TAG = "LearnActivity"
 private const val OPTIONS_FRAGMENT_TAG = "OPTIONS_FRAGMENT"
+const val LIST_ERROR  = -1
 
 class LearnActivity : AppCompatActivity() {
 
@@ -32,11 +33,11 @@ class LearnActivity : AppCompatActivity() {
 
         Log.d(TAG,"Learn Activity: onCreate")
 
-        val type = intent.getIntExtra(LEARN_EXTRA_TYPE, -1)
-        val listId = intent.getIntExtra(LEARN_EXTRA_LIST_ID, -1)
+        val type = intent.getIntExtra(LEARN_EXTRA_TYPE, LIST_ERROR)
+        val listId = intent.getIntExtra(LEARN_EXTRA_LIST_ID, LIST_ERROR)
 
         if (type == NOT_START) throw error("BAD TYPE")
-        if (listId == -1) throw error("NO LIST ID")
+        if (listId == LIST_ERROR) throw error("NO LIST ID")
 
 
         binding = ActivityLearnBinding.bind(learn_root)
