@@ -5,6 +5,7 @@
     tools:context=".LearnActivity">
 
     <data>
+
         <variable
             name="viewModel"
             type="com.applications.fishcardroomandmvvm.viewModels.LearnViewModel" />
@@ -20,15 +21,25 @@
             android:id="@+id/toolbar_learn"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             android:background="@color/blue_300"
             android:elevation="4dp"
             android:theme="@style/Theme.toolbar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-        <fragment
+            <TextView
+                android:id="@+id/wordIndex"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textColor="@color/white" />
+
+
+        </com.google.android.material.appbar.MaterialToolbar>
+
+        <androidx.fragment.app.FragmentContainerView
             android:id="@+id/fragment_learn_host"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
@@ -38,8 +49,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar_learn"
-            app:navGraph="@navigation/learn_words_nav" />
+            app:layout_constraintTop_toBottomOf="@+id/toolbar_learn" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

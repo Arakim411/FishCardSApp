@@ -27,6 +27,13 @@ interface FishCardDao {
     @Query("SELECT * FROM list_table WHERE id =:id")
     fun getFishCardListById(id: Int): LiveData<FishCardList>
 
+    @Query("SELECT * FROM list_table WHERE id =:id")
+    fun getFishCardList(id: Int): FishCardList
+
+    @Query("SELECT * FROM words_table WHERE FishCardListId = :listId ORDER BY word DESC")
+    fun getWordsByListIdAsList(listId: Int): List<Word>
+
+
     @Update
     fun updateFishCardList(fishCardList: FishCardList)
 

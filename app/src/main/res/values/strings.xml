@@ -44,6 +44,11 @@
     <string name="bottom_id_words_title">Words</string>
     <string name="bottom_id_spelling_title">Spelling</string>
     <string name="options">Options</string>
+    <string name="show_statistics">Show Statistics</string>
+    <string name="animations_on_off">Animations on/off</string>
+    <string name="shuffle_list">Shuffle list</string>
+    <string name="lets_you_choose_if_you_know_the_word">Lets you choose if you know the word</string>
+    <string name="show_translation">Show Translation</string>
 
 
 </resources>

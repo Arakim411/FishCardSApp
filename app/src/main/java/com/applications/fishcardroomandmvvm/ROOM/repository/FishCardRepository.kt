@@ -31,5 +31,9 @@ class FishCardRepository(private val fishDao: FishCardDao) {
 
     fun deleteWord(word: Word) = fishDao.deleteWord(word)
 
+    fun getFishCardList(id: Int): FishCardList = fishDao.getFishCardList(id)
+
+    fun getWordsByListIdAsList(listId: Int): List<Word> = fishDao.getWordsByListIdAsList(listId)
+
 
 }

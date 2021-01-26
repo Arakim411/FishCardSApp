@@ -7,10 +7,10 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.findNavController
 import com.applications.fishcardroomandmvvm.databinding.ActivityLearnBinding
-import com.applications.fishcardroomandmvvm.fragments.LearnWord.FragmentLearnContentDirections
+import com.applications.fishcardroomandmvvm.fragments.LearnWord.FragmentLearnContent
 import com.applications.fishcardroomandmvvm.fragments.LearnWord.FragmentWordsOptions
 import com.applications.fishcardroomandmvvm.viewModels.LearnViewModel
 import com.applications.fishcardroomandmvvm.viewModels.NOT_START
@@ -20,24 +20,27 @@ import kotlinx.android.synthetic.main.activity_learn.*
 
 private const val TAG = "LearnActivity"
 private const val OPTIONS_FRAGMENT_TAG = "OPTIONS_FRAGMENT"
-const val LIST_ERROR  = -1
+const val LIST_ERROR = -1
 
-class LearnActivity : AppCompatActivity() {
+class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEvents {
 
     private lateinit var binding: ActivityLearnBinding
     private lateinit var mViewModel: LearnViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_learn)
 
-        Log.d(TAG,"Learn Activity: onCreate")
+
+        Log.d(TAG, "Learn Activity: onCreate")
 
         val type = intent.getIntExtra(LEARN_EXTRA_TYPE, LIST_ERROR)
         val listId = intent.getIntExtra(LEARN_EXTRA_LIST_ID, LIST_ERROR)
 
         if (type == NOT_START) throw error("BAD TYPE")
         if (listId == LIST_ERROR) throw error("NO LIST ID")
+
 
 
         binding = ActivityLearnBinding.bind(learn_root)
@@ -51,34 +54,67 @@ class LearnActivity : AppCompatActivity() {
 
         //liveData Observers
 
+        mViewModel.toolbarAction.observe(this) { action ->
+
+            when (action) {
+                LearnViewModel.ToolbarActions.ACTION_OPTIONS -> {
+                    supportActionBar?.title = getString(R.string.options)
+                    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                    binding.wordIndex.visibility = View.GONE
+                    binding.toolbarLearn.setNavigationOnClickListener {
+                        onBackPressed()
+                    }
+                }
+                LearnViewModel.ToolbarActions.DEFAULT_TITLE -> {
+                    supportActionBar?.title = mViewModel.toolBarTitle
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    binding.wordIndex.visibility = View.VISIBLE
+                }
+
+                LearnViewModel.ToolbarActions.NONE -> return@observe
+
+
+            }
+        }
+
         mViewModel.showOptions.observe(this) { value ->
+
+            val fragment = supportFragmentManager.findFragmentByTag(OPTIONS_FRAGMENT_TAG)
+
             if (value) {
-                // we can easily recreate this fragment in the same state because it takes data from sharedPreferences
-                // so user won't lose current state of fragment.
-                val fragment = supportFragmentManager.findFragmentByTag(OPTIONS_FRAGMENT_TAG)
 
                 if (fragment == null) {
+
+                    Log.d(TAG, "show options fragment")
                     supportFragmentManager.beginTransaction().add(
                         R.id.fragment_learn_host, FragmentWordsOptions(),
                         OPTIONS_FRAGMENT_TAG
                     ).commit()
-                } else {
-                    supportFragmentManager.removeFragmentWithTag(OPTIONS_FRAGMENT_TAG)
-                }
+
+                } else Log.e(TAG, "fragment is already added, message should be visible only when device is rotating ")
+
             } else {
-                supportFragmentManager.removeFragmentWithTag(OPTIONS_FRAGMENT_TAG)
+
+                if (fragment != null) {
+                    supportFragmentManager.beginTransaction().remove(fragment).commit()
+                }
+
             }
-
         }
 
+        mViewModel.currentFragment.observe(this){ currentFragment ->
 
-        //it not put it in viewModel because it trigger once, only when user launch activity
-        // and there is no sense to create variable for this in viewModel
-        if (savedInstanceState != null) {
-            val nav = findNavController(R.id.fragment_learn_host)
-            val action = FragmentLearnContentDirections.actionFragmentLearnContentSelf(listId)
-            nav.navigate(action)
+            when(currentFragment){
+
+                LearnViewModel.CurrentFragment.FRAGMENT_LEARN_CONTENT -> {
+                    supportFragmentManager.beginTransaction().replace(binding.fragmentLearnHost.id,FragmentLearnContent.getInstance(listId)).commit()
+                }
+                LearnViewModel.CurrentFragment.FRAGMENT_SUMMARY -> {}
+                LearnViewModel.CurrentFragment.NONE ->  return@observe
+            }
+            mViewModel.currentFragmentReset()
         }
+
 
     }
 
@@ -87,9 +123,10 @@ class LearnActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.words_options -> {
 
-                mViewModel.eventShowOptions()
+                mViewModel.optionsIconClicked()
                 true
             }
+
 
             else -> super.onOptionsItemSelected(item)
         }
@@ -104,8 +141,25 @@ class LearnActivity : AppCompatActivity() {
 
 
     override fun onBackPressed() {
-        super.onBackPressed()
-        finish()
+        when(mViewModel.toolbarAction.value){
+            LearnViewModel.ToolbarActions.ACTION_OPTIONS -> {mViewModel.eventHideOptions()}
+
+            else ->  finish()
+        }
+
+    }
+
+    override fun onNextWord(wordNumber: Int, wordCount: Int) {
+        val a = wordNumber.toString() + " / " + (wordCount+1).toString()
+        binding.wordIndex.text = a
+    }
+
+    override fun onListNameChanged(listName: String) {
+        mViewModel.setToolBarTitle(listName)
+    }
+
+    override fun onListFinished() {
+
     }
 
 }

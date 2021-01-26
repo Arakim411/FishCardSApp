@@ -44,19 +44,17 @@ abstract class Manager() {
         // and has also disadvantage for example when we want more options which can user change. we must define function for them here.
 
         //options
-        private val showWithTranslate = "show_with_translate"
+         val showWithTranslate = "show_with_translate"
         private val showDefValue = false
 
-        private val saveData = "save_data" // defines whether user must tick that he know or don't know word
+         val saveData = "save_data" // defines whether user must tick that he know or don't know word
         private val saveDefValue = false
 
-        private val randomList = "random_list" // list is in order  or in random order
+         val randomList = "random_list" // list is in order  or in random order
         private val randomDefValue = false
 
-        private val animationsOnOFF = "animations_on_off"
-        private val animationsDefValue = true
 
-        private val showStatistics = "show_statistics"
+         val showStatistics = "show_statistics"
         private val statisticsDefValue = false
 
         //shared preferences
@@ -68,6 +66,7 @@ abstract class Manager() {
 
         fun setListener(listener: SharedPreferences.OnSharedPreferenceChangeListener?) {
             sharedPreferences.registerOnSharedPreferenceChangeListener(listener)
+
         }
 
         //SET
@@ -80,8 +79,6 @@ abstract class Manager() {
 
         fun setRandomList(boolean: Boolean) = editor.putBoolean(randomList, boolean).commit()
 
-        fun setAnimationsOnOff(boolean: Boolean) =
-            editor.putBoolean(animationsOnOFF, boolean).commit()
 
         fun setShowStatistics(boolean: Boolean) =
             editor.putBoolean(showStatistics, boolean).commit()
@@ -94,9 +91,6 @@ abstract class Manager() {
         fun getSaveData(): Boolean = sharedPreferences.getBoolean(saveData, saveDefValue)
 
         fun getRandomList(): Boolean = sharedPreferences.getBoolean(randomList, randomDefValue)
-
-        fun getAnimationsOnOff(): Boolean =
-            sharedPreferences.getBoolean(animationsOnOFF, animationsDefValue)
 
         fun getShowStatistics(): Boolean =
             sharedPreferences.getBoolean(showStatistics, statisticsDefValue)

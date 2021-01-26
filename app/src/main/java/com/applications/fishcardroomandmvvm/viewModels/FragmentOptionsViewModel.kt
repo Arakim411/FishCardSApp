@@ -11,36 +11,35 @@ class FragmentOptionsViewModel(application: Application) : AndroidViewModel(appl
 
     private val manager = Manager.getLearnActivityManager(application)
 
-    val showWithTranslate = manager.getShowWithTranslate()
-    val saveData = manager.getSaveData()
-    val randomList = manager.getRandomList()
-    val animationsOnOFF = manager.getAnimationsOnOff()
-    val showStatic = manager.getShowStatistics()
+    var showWithTranslate = manager.getShowWithTranslate()
+    var saveData = manager.getSaveData()
+    var randomList = manager.getRandomList()
+    var showStatic = manager.getShowStatistics()
 
 
-    fun setShowWithTranslate(value: Boolean) {
+    fun showWithTranslate(value: Boolean) {
         Log.i(TAG, "ShowWithTranslate changed: $value")
         manager.setShowWithTranslation(value)
+        showWithTranslate = value
     }
 
-    fun setSaveData(value: Boolean) {
+    fun saveData(value: Boolean) {
         Log.i(TAG, "saveData changed: $value")
         manager.setSaveData(value)
+        saveData = value
     }
 
-    fun setRandomList(value: Boolean) {
+    fun randomList(value: Boolean) {
         Log.i(TAG, "randomList changed: $value")
         manager.setRandomList(value)
+        randomList = value
     }
 
-    fun setAnimationsOnOFF(value: Boolean) {
-        Log.i(TAG, "animationsOnOFF changed: $value")
-        manager.setAnimationsOnOff(value)
-    }
 
-    fun setShowStatistics(value: Boolean) {
+    fun showStatistics(value: Boolean) {
         Log.i(TAG, "showStatistics changed: $value")
         manager.setShowStatistics(value)
+        showStatic = value
     }
 
 

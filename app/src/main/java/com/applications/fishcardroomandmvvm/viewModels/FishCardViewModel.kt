@@ -66,6 +66,10 @@ class FishCardViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun getFishCardList(id: Int): FishCardList = repository.getFishCardList(id)
+
+    fun getWordsByListIdAsList(listId: Int): List<Word> = repository.getWordsByListIdAsList(listId)
+
 
 
 
