@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProviders
 import com.applications.fishcardroomandmvvm.databinding.ActivityLearnBinding
 import com.applications.fishcardroomandmvvm.fragments.LearnWord.FragmentLearnContent
@@ -160,6 +161,11 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
 
     override fun onListFinished() {
 
+    }
+
+    override fun onListEmpty() {
+        finish()
+        Toast.makeText(applicationContext, getString(R.string.add_at_lest_3_words_to_your_list), Toast.LENGTH_SHORT).show()
     }
 
 }

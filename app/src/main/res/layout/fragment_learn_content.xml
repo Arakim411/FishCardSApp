@@ -17,6 +17,130 @@
         android:layout_height="match_parent"
         android:background="@color/activity_color">
 
+        <ImageView
+            android:id="@+id/native_language_flag"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/foreign_flag"
+            app:layout_constraintEnd_toStartOf="@+id/foreign_flag"
+            app:layout_constraintTop_toTopOf="@+id/foreign_flag"
+            tools:src="@drawable/ic_poland" />
+
+        <ImageView
+            android:id="@+id/foreign_flag"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:src="@drawable/ic_germany"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/goodAnswers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/greenDark"
+            android:textSize="22sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="10" />
+
+        <TextView
+            android:id="@+id/badAnswers"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:textColor="@color/readDark"
+            android:textSize="22sp"
+            app:layout_constraintBottom_toBottomOf="@+id/goodAnswers"
+            app:layout_constraintStart_toEndOf="@+id/goodAnswers"
+            app:layout_constraintTop_toTopOf="@+id/goodAnswers"
+            tools:text="10" />
+
+
+        <TextView
+            android:id="@+id/word_native"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginRight="16dp"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/native_language_flag"
+            tools:text="WORD" />
+
+        <Button
+            android:id="@+id/next_word"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:drawableRight="@drawable/ic_baseline_arrow_forward_24"
+            android:drawableTint="@color/white"
+            android:text="@string/next"
+            android:onClick="@{() -> viewModel.nextWord()}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/know"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginRight="8dp"
+            android:backgroundTint="@color/green"
+            android:minEms="8"
+            android:text="@string/i_know"
+            app:layout_constraintBottom_toBottomOf="@+id/dont_knowAnswer"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/dont_knowAnswer" />
+
+
+        <Button
+            android:id="@+id/dont_knowAnswer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginBottom="8dp"
+            android:backgroundTint="@color/red"
+            android:minEms="8"
+            android:text="@string/i_dont_know"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <Button
+            android:id="@+id/bnt_show_translation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:onClick="@{() -> viewModel.onTranslationBntClick()}"
+            android:text="@string/show_translation"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/word_native" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/translationList"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/next_word"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bnt_show_translation"
+            app:layout_constraintVertical_bias="0.0" />
+
+
         <LinearLayout
             android:id="@+id/waitingLayout"
             android:layout_width="match_parent"
@@ -31,7 +155,6 @@
                 android:indeterminateTint="@color/blue_300" />
 
         </LinearLayout>
-
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -33,6 +33,8 @@ class LearnViewModel(application: Application, val type: Int) : AndroidViewModel
     val toolBarTitle: String
     get() = _toolBarTitle
 
+
+
     init {
 
         managerWords =

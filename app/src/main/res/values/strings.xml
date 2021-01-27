@@ -37,7 +37,7 @@
     <string name="home">Home</string>
     <string name="new_word">New Word</string>
     <string name="translation">Translation %1$s</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="edit">Edit</string>
     <string name="delete_word">Delete</string>
@@ -47,8 +47,14 @@
     <string name="show_statistics">Show Statistics</string>
     <string name="animations_on_off">Animations on/off</string>
     <string name="shuffle_list">Shuffle list</string>
-    <string name="lets_you_choose_if_you_know_the_word">Lets you choose if you know the word</string>
-    <string name="show_translation">Show Translation</string>
+    <string name="save_answers">Save answers</string>
+    <string name="always_show_translation">Always show Translation</string>
+    <string name="add_at_lest_3_words_to_your_list">Add at least 3 words to your list</string>
+    <string name="next">Next</string>
+    <string name="i_dont_know">I don\'t know</string>
+    <string name="i_know">I Know</string>
+    <string name="show_translation">translation</string>
+    <string name="hide">Hide</string>
 
 
 </resources>

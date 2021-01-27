@@ -18,25 +18,27 @@ abstract class Manager() {
 
     companion object {
 
-        @Volatile
-        private var manager: Manager.WordsManager? = null
+        fun getLearnActivityManager(context: Context): WordsManager = WordsManager(context)
 
-        fun getLearnActivityManager(context: Context): WordsManager {
-
-            val tempInstance = manager
-
-            return if (tempInstance != null) {
-                tempInstance
-            } else {
-                val instance = WordsManager(context)
-                manager = instance
-                instance
-            }
-        }
+//        @Volatile
+//        private var manager: Manager.WordsManager? = null
+//
+//        fun getLearnActivityManager(context: Context): WordsManager {
+//
+//            val tempInstance = manager
+//
+//            return if (tempInstance != null) {
+//                tempInstance
+//            } else {
+//                val instance = WordsManager(context)
+//                manager = instance
+//                instance
+//            }
+//        }
 
     }
 
-    class WordsManager(context: Context) : Manager() {
+    class WordsManager (context: Context) : Manager() {
         //this object helps to store options related to LearnActivity with type Words
         // keeps value of options which user set
         //for every option which user can change i use different function to save value

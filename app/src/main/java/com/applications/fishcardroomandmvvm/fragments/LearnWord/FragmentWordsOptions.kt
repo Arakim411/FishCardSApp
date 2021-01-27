@@ -31,10 +31,7 @@ class FragmentWordsOptions : Fragment() {
         mViewModel = ViewModelProviders.of(this).get(FragmentOptionsViewModel::class.java)
         bidning.viewModel = mViewModel
 
-            if(savedInstanceState != null){
-
-            }
-
+         
 
 
 

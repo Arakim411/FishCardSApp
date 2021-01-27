@@ -28,7 +28,7 @@
                 android:layout_height="wrap_content"
                 android:checked="@{viewModel.ShowWithTranslate}"
                 android:onCheckedChanged="@{(switch, checked) -> viewModel.showWithTranslate(checked)}"
-                android:text="@string/show_translation"
+                android:text="@string/always_show_translation"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:checked="@{viewModel.saveData}"
                 android:onCheckedChanged="@{(switch, checked) -> viewModel.saveData(checked)}"
-                android:text="@string/lets_you_choose_if_you_know_the_word"
+                android:text="@string/save_answers"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/switch_show_translation" />

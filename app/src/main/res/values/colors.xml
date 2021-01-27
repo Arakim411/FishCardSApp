@@ -12,6 +12,9 @@
     <color name="gray">#80808080</color>
     <color name="fabPrimary">#4FC3F7</color>
     <color name="light_yellow">#EFCB0A</color>
+    <color name="readDark">#9C0303</color>
+    <color name="greenDark">#0EB855</color>
+    <color name="red">#C10D0D</color>
 
 
 
