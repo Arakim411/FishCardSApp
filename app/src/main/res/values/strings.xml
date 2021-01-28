@@ -46,7 +46,7 @@
     <string name="options">Options</string>
     <string name="show_statistics">Show Statistics</string>
     <string name="animations_on_off">Animations on/off</string>
-    <string name="shuffle_list">Shuffle list</string>
+    <string name="shuffle_list">Random list</string>
     <string name="save_answers">Save answers</string>
     <string name="always_show_translation">Always show Translation</string>
     <string name="add_at_lest_3_words_to_your_list">Add at least 3 words to your list</string>
@@ -55,6 +55,8 @@
     <string name="i_know">I Know</string>
     <string name="show_translation">translation</string>
     <string name="hide">Hide</string>
+    <string name="list_will_be_random">On next learning, list will be random</string>
+    <string name="list_normal_order">On next learning, list will be in normal order</string>
 
 
 </resources>

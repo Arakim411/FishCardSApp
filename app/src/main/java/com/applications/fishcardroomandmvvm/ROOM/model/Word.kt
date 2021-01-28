@@ -14,10 +14,10 @@ import kotlinx.android.parcel.Parcelize
 data class Word(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "word_id") val id: Int = 0,
     @ColumnInfo(name = "FishCardListId") val fishId: Int,
-    val word: String,
-    val translation: ArrayList<String>,
-    val goodAnswers: Int,
-    val badAnswers: Int
+    var word: String,
+    var translation: ArrayList<String>,
+    var goodAnswers: Int,
+    var badAnswers: Int
 ) : Parcelable
 
 

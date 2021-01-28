@@ -25,6 +25,9 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     private lateinit var fishCardList: FishCardList
     private val manager = Manager.getLearnActivityManager(application)
 
+    var isNextWordByOrientationChange = false
+    var isShowTranslationByOrientationChange = false
+
     private var _listSize: Int = 0
     val listSize: Int
         get() = _listSize
@@ -39,9 +42,6 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     val saveData: LiveData<Boolean>
         get() = _saveData
 
-    private val _randomList = MutableLiveData<Boolean>()
-    val randomList: LiveData<Boolean>
-        get() = _randomList
 
     private val _showStatistics = MutableLiveData<Boolean>()
     val showStatistics: LiveData<Boolean>
@@ -80,14 +80,32 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
     private val _translationBntType = MutableLiveData<ButtonType>()
     val translationButtonType: LiveData<ButtonType>
-    get() = _translationBntType
+        get() = _translationBntType
 
 
     private val _showTranslation = MutableLiveData<Boolean>()
     val showTranslation: LiveData<Boolean>
-    get() = _showTranslation
+        get() = _showTranslation
 
 
+    // i don't have any idea why, but when it is in ini {} this listeners sometimes is null (after trigger sometimes)
+    val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
+
+        Log.d(TAG, "sharedPreferences Listener with key: $key")
+        when (key) {
+            manager.showWithTranslate -> {
+                _showWithTranslate.value = sp.getBoolean(key, false)
+            }
+
+            manager.saveData -> {
+                _saveData.value = sp.getBoolean(key, false)
+            }
+
+            manager.showStatistics -> {
+                _showStatistics.value = sp.getBoolean(key, false)
+            }
+        }
+    }
 
 
     init {
@@ -97,33 +115,9 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
         _showWithTranslate.value = manager.getShowWithTranslate()
         _saveData.value = manager.getSaveData()
-        _randomList.value = manager.getRandomList()
         _showStatistics.value = manager.getShowStatistics()
 
         _translationBntType.value = ButtonType.SHOW_TRANSLATION
-
-
-        val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
-
-            Log.d(TAG,"sharedPreferences Listener with key: $key")
-            when (key) {
-                manager.showWithTranslate -> {
-                    _showWithTranslate.value = sp.getBoolean(key, false)
-                }
-
-                manager.saveData -> {
-                    _saveData.value = sp.getBoolean(key, false)
-                }
-
-                manager.randomList -> {
-                    _randomList.value = sp.getBoolean(key, false)
-                }
-
-                manager.showStatistics -> {
-                    _showStatistics.value = sp.getBoolean(key, false)
-                }
-            }
-        }
 
         manager.setListener(listener)
 
@@ -137,6 +131,9 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
             val fishCardList = fishCardViewModel.getFishCardList(listId)
 
             withContext(Dispatchers.Main) {
+
+                if(manager.getRandomList())
+                    words =  words.shuffled()
 
                 _isDataLoaded.value = true
                 _toolBarTitle.value = fishCardList.name
@@ -158,41 +155,72 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
     }
 
+    fun onGoodAnswerClick() {
+        //only when _saveData is true
+        // it lets user decide whether he knows or don't knows word
+        val currentWord = _currentWord.value
+
+        if (currentWord != null) {
+            val updatedWord = currentWord.apply { goodAnswers++ }
+            fishCardViewModel.updateWord(updatedWord)
+
+        } else { Log.e(TAG, "word with index: ${_wordIndex.value} and listSize $_listSize shouldn't be null") }
+
+        nextWord()
+    }
+
+    fun onBadAnswerClick() {
+        //only when _saveData is true
+        val currentWord = _currentWord.value
+
+        if (currentWord != null) {
+            val updatedWord = currentWord.apply { badAnswers++ }
+            fishCardViewModel.updateWord(updatedWord)
+
+        } else { Log.e(TAG, "word with index: ${_wordIndex.value} and listSize $_listSize shouldn't be null") }
+
+        nextWord()
+    }
+
     fun nextWord() {
+
+        if (_showWithTranslate.value == false && !isNextWordByOrientationChange) {
+            hideTranslation()
+        }
+
         if (_listSize > 0) {
             var index = _wordIndex.value
             _currentWord.value = words[index!!]
 
+            Log.i(TAG, "next word ${_currentWord.value}")
             _wordIndex.value = ++index
         }
 
-        if(_showWithTranslate.value == false){
-            hideTranslation()
+    }
+
+    fun onTranslationBntClick() {
+        when (_translationBntType.value) {
+
+            ButtonType.SHOW_TRANSLATION -> showTranslation()
+
+            ButtonType.HIDE_TRANSLATION -> hideTranslation()
         }
     }
 
-    fun onTranslationBntClick(){
-       when(_translationBntType.value) {
-
-           ButtonType.SHOW_TRANSLATION -> showTranslation()
-
-           ButtonType.HIDE_TRANSLATION -> hideTranslation()
-       }
-    }
-
-      fun showTranslation(){
-          _showTranslation.value = true
+    fun showTranslation() {
+        _showTranslation.value = true
         _translationBntType.value = ButtonType.HIDE_TRANSLATION
     }
 
-    fun hideTranslation(){
+    fun hideTranslation() {
         _translationBntType.value = ButtonType.SHOW_TRANSLATION
         _showTranslation.value = false
     }
 
-    enum class ButtonType{
+    enum class ButtonType {
         SHOW_TRANSLATION,
         HIDE_TRANSLATION
     }
+
 
 }

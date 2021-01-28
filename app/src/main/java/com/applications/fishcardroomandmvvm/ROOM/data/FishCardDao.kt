@@ -33,6 +33,8 @@ interface FishCardDao {
     @Query("SELECT * FROM words_table WHERE FishCardListId = :listId ORDER BY word DESC")
     fun getWordsByListIdAsList(listId: Int): List<Word>
 
+    @Update
+    fun updateWord(word: Word)
 
     @Update
     fun updateFishCardList(fishCardList: FishCardList)

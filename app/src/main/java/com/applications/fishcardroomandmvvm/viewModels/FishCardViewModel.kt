@@ -70,7 +70,9 @@ class FishCardViewModel(application: Application) : AndroidViewModel(application
 
     fun getWordsByListIdAsList(listId: Int): List<Word> = repository.getWordsByListIdAsList(listId)
 
+    fun updateWord(word: Word)  = viewModelScope.launch(Dispatchers.IO) {  repository.updateWord(word)}  }
 
 
 
-}
+
+

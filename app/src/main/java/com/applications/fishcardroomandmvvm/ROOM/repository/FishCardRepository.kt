@@ -35,5 +35,6 @@ class FishCardRepository(private val fishDao: FishCardDao) {
 
     fun getWordsByListIdAsList(listId: Int): List<Word> = fishDao.getWordsByListIdAsList(listId)
 
+    fun updateWord(word: Word) = fishDao.updateWord(word)
 
 }

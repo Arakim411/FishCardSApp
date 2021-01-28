@@ -1,5 +1,11 @@
+@file:Suppress("DEPRECATION")
+
 package com.applications.fishcardroomandmvvm.fragments.LearnWord
 
+
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
@@ -8,22 +14,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.animation.doOnEnd
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.applications.fishcardroomandmvvm.LIST_ERROR
 import com.applications.fishcardroomandmvvm.R
 import com.applications.fishcardroomandmvvm.adapters.TranslationRecyclerViewAdapter
 import com.applications.fishcardroomandmvvm.databinding.FragmentLearnContentBinding
-import com.applications.fishcardroomandmvvm.viewModels.FishCardViewModel
 import com.applications.fishcardroomandmvvm.viewModels.FragmentLearnViewModel
 import com.applications.fishcardroomandmvvm.viewModels.viewModelFactorys.FragmentLearnViewModelFactory
-import kotlinx.android.synthetic.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+
 
 // in this fragment user learn words
 
@@ -31,12 +33,49 @@ private const val TAG = "fragmentLearnC"
 
 private const val ARG_LIST_ID = "ARG_LIST_ID"
 
+private const val animationDuration = 500L
+
+private const val SIS_NEXT_WORD = "SIS_NEXT_WORD"
+private const val SIS_SHOW_WITH_TRANSLATION = "SIS_SHOW_WITH_TRANSLATION"
+
+@Suppress("DEPRECATION")
 class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.TranslationListEvents {
 
     private var events: LearnFragmentEvents? = null
 
     private lateinit var binding: FragmentLearnContentBinding
     private lateinit var mViewModel: FragmentLearnViewModel
+
+
+    private val updateListener = ValueAnimator.AnimatorUpdateListener { animator ->
+
+        val animatedValue = animator.animatedValue as Float
+
+        binding.wordNative.alpha = animatedValue
+
+        if (mViewModel.showStatistics.value == true) {
+            binding.badAnswers.alpha = animatedValue
+            binding.goodAnswers.alpha = animatedValue
+        }
+
+        if (mViewModel.showTranslation.value == true) {
+            binding.translationList.alpha = animatedValue
+        }
+    }
+
+    private val disappearUI = ObjectAnimator.ofFloat(0f, 1f).apply {
+        duration = animationDuration
+        addUpdateListener(updateListener)
+    }
+
+    private val appearUI = ObjectAnimator.ofFloat(1f, 0f).apply {
+        duration = animationDuration
+        addUpdateListener(updateListener)
+    }
+
+    private val bouncer = AnimatorSet().apply {
+        play(disappearUI).after(appearUI)
+    }
 
     interface LearnFragmentEvents {
         fun onNextWord(wordNumber: Int, wordCount: Int)
@@ -52,6 +91,7 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
     ): View {
 
         val listId = requireArguments().getInt(ARG_LIST_ID)
+
 
 
         binding = DataBindingUtil.inflate(
@@ -70,6 +110,17 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
 
         binding.viewModel = mViewModel
 
+        mViewModel.isNextWordByOrientationChange =
+            savedInstanceState?.getBoolean(SIS_NEXT_WORD) ?: false
+
+        mViewModel.isShowTranslationByOrientationChange = savedInstanceState?.getBoolean(
+            SIS_SHOW_WITH_TRANSLATION) ?: false
+
+        // RecyclerView
+        val adapter = TranslationRecyclerViewAdapter(this)
+        binding.translationList.layoutManager = LinearLayoutManager(requireContext())
+        binding.translationList.adapter = adapter
+
         //Observers
 
         mViewModel.isDataLoaded.observe(viewLifecycleOwner) { value ->
@@ -80,37 +131,49 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
             events?.onListNameChanged(title)
         }
 
-        val adapter = TranslationRecyclerViewAdapter(this)
-        binding.translationList.layoutManager = LinearLayoutManager(requireContext())
-        binding.translationList.adapter = adapter
+
 
         mViewModel.currentWord.observe(viewLifecycleOwner) { word ->
-                val wordInNative = word.word
-                val translations = word.translation
-                val goodAnswers = word.goodAnswers
-                val badAnswers = word.badAnswers
+            val wordInNative = word.word
+            val translations = word.translation
+            val goodAnswers = word.goodAnswers
+            val badAnswers = word.badAnswers
 
+
+
+            bouncer.childAnimations[1].doOnEnd {
                 binding.wordNative.text = wordInNative
                 binding.goodAnswers.text = goodAnswers.toString()
                 binding.badAnswers.text = badAnswers.toString()
-
                 adapter.setData(translations)
+            }
+
+            if (mViewModel.wordIndex.value != 0 && !mViewModel.isNextWordByOrientationChange)
+                bouncer.start()
+            else {
+                binding.wordNative.text = wordInNative
+                binding.goodAnswers.text = goodAnswers.toString()
+                binding.badAnswers.text = badAnswers.toString()
+                adapter.setData(translations)
+            }
+
+            mViewModel.isNextWordByOrientationChange = false
 
         }
 
-        mViewModel.showTranslation.observe(viewLifecycleOwner){ value ->
-            if(value){
-                Log.i(TAG,"Translation Visible")
+        mViewModel.showTranslation.observe(viewLifecycleOwner) { value ->
+            if (value) {
+                Log.i(TAG, "Translation Visible")
                 binding.translationList.visibility = View.VISIBLE
-            }else{
-                Log.i(TAG,"Translation Invisible")
+            } else {
+                Log.i(TAG, "Translation Invisible")
                 binding.translationList.visibility = View.GONE
             }
         }
 
-        mViewModel.translationButtonType.observe(viewLifecycleOwner){ type ->
-            when(type){
-                FragmentLearnViewModel.ButtonType.SHOW_TRANSLATION ->{
+        mViewModel.translationButtonType.observe(viewLifecycleOwner) { type ->
+            when (type) {
+                FragmentLearnViewModel.ButtonType.SHOW_TRANSLATION -> {
                     binding.bntShowTranslation.text = getString(R.string.show_translation)
                 }
 
@@ -118,7 +181,8 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
                     binding.bntShowTranslation.text = getString(R.string.hide)
                 }
 
-                else -> {}
+                else -> {
+                }
             }
 
         }
@@ -135,53 +199,64 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
 
         mViewModel.showWithTranslate.observe(viewLifecycleOwner) { value ->
 
-                if(value){
-                    Log.d(TAG,"show  translation")
+                if (value) {
+                    Log.d(TAG, "show  translation")
                     binding.bntShowTranslation.visibility = View.INVISIBLE
                     mViewModel.showTranslation()
-                }else{
-                    Log.d(TAG,"hide translation")
+
+                    val params =
+                        binding.translationList.layoutParams as ConstraintLayout.LayoutParams
+                    params.topToBottom = binding.wordNative.id
+                    binding.translationList.layoutParams = params
+
+                } else if(!mViewModel.isShowTranslationByOrientationChange) {
+                    Log.d(TAG, "hide translation")
                     binding.bntShowTranslation.visibility = View.VISIBLE
                     mViewModel.hideTranslation()
+
+                    val params =
+                        binding.translationList.layoutParams as ConstraintLayout.LayoutParams
+                    params.topToBottom = binding.bntShowTranslation.id
+                    binding.translationList.layoutParams = params
                 }
+
+            mViewModel.isShowTranslationByOrientationChange = false
 
         }
 
 
         mViewModel.saveData.observe(viewLifecycleOwner) { value ->
-                // allows user to decide if he know or don't know word and save it to database
-                if(value){
-                    binding.dontKnowAnswer.visibility = View.VISIBLE
-                    binding.know.visibility = View.VISIBLE
-                    binding.nextWord.visibility = View.INVISIBLE
-                }else{
-                    binding.dontKnowAnswer.visibility = View.INVISIBLE
-                    binding.know.visibility = View.GONE
-                    binding.nextWord.visibility = View.VISIBLE
-                }
+            // allows user to decide if he know or don't know word and save it to database
+            if (value) {
+                binding.dontKnowAnswer.visibility = View.VISIBLE
+                binding.know.visibility = View.VISIBLE
+                binding.nextWord.visibility = View.INVISIBLE
+            } else {
+                binding.dontKnowAnswer.visibility = View.INVISIBLE
+                binding.know.visibility = View.GONE
+                binding.nextWord.visibility = View.VISIBLE
+            }
         }
 
-        mViewModel.randomList.observe(viewLifecycleOwner) { value ->
-
-        }
 
         mViewModel.showStatistics.observe(viewLifecycleOwner) { value ->
 
-            if(value){
+            if (value) {
                 binding.goodAnswers.visibility = View.VISIBLE
                 binding.badAnswers.visibility = View.VISIBLE
 
-            }else{
+            } else {
                 binding.goodAnswers.visibility = View.INVISIBLE
                 binding.badAnswers.visibility = View.INVISIBLE
             }
         }
 
-        mViewModel.nativeFlagResource.observe(viewLifecycleOwner){ resourcesId ->
+
+        mViewModel.nativeFlagResource.observe(viewLifecycleOwner) { resourcesId ->
             binding.nativeLanguageFlag.setImageResource(resourcesId)
         }
 
-        mViewModel.foreignFlagResource.observe(viewLifecycleOwner){ resourceId ->
+        mViewModel.foreignFlagResource.observe(viewLifecycleOwner) { resourceId ->
             binding.foreignFlag.setImageResource(resourceId)
 
         }
@@ -217,8 +292,14 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
     }
 
     override fun onItemClick(text: String) {
-        Log.d(TAG,"Translation: $text clicked")
+        Log.d(TAG, "Translation: $text clicked")
 
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(SIS_NEXT_WORD, true)
+        outState.putBoolean(SIS_SHOW_WITH_TRANSLATION,true)
     }
 
 

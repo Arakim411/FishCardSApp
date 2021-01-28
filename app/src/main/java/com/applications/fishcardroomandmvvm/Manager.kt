@@ -1,7 +1,11 @@
 package com.applications.fishcardroomandmvvm
 
+import android.animation.Animator
+import android.animation.AnimatorInflater
 import android.content.Context
 import android.content.SharedPreferences
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import androidx.lifecycle.LiveData
 
 const val FISH_LIST_EXTRA = "FISH_LIST_EXTRA"
@@ -17,6 +21,7 @@ abstract class Manager() {
 
 
     companion object {
+
 
         fun getLearnActivityManager(context: Context): WordsManager = WordsManager(context)
 
