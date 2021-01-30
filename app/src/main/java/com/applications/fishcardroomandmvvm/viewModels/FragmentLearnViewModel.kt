@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.applications.fishcardroomandmvvm.LanguageManager
 import com.applications.fishcardroomandmvvm.Manager
+import com.applications.fishcardroomandmvvm.R
 import com.applications.fishcardroomandmvvm.ROOM.model.FishCardList
 import com.applications.fishcardroomandmvvm.ROOM.model.Word
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +25,10 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     private lateinit var words: List<Word>
     private lateinit var fishCardList: FishCardList
     private val manager = Manager.getLearnActivityManager(application)
+
+    private val finishedText = application.getString(R.string.home)
+
+     lateinit var  foreignLanguageId: String
 
     var isNextWordByOrientationChange = false
     var isShowTranslationByOrientationChange = false
@@ -87,6 +92,14 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     val showTranslation: LiveData<Boolean>
         get() = _showTranslation
 
+    private val _listFinished = MutableLiveData<Boolean>()
+    val listFinished: LiveData<Boolean>
+        get() = _listFinished
+
+    private val _nextWordBntText = MutableLiveData<String>()
+    val nextWordBntText: LiveData<String>
+        get() = _nextWordBntText
+
 
     // i don't have any idea why, but when it is in ini {} this listeners sometimes is null (after trigger sometimes)
     val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
@@ -121,6 +134,8 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
         manager.setListener(listener)
 
+        _nextWordBntText.value = application.getString(R.string.next)
+
     }
 
     private fun initializeWords() {
@@ -132,8 +147,8 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
             withContext(Dispatchers.Main) {
 
-                if(manager.getRandomList())
-                    words =  words.shuffled()
+                if (manager.getRandomList())
+                    words = words.shuffled()
 
                 _isDataLoaded.value = true
                 _toolBarTitle.value = fishCardList.name
@@ -144,6 +159,8 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
                     languageManager.getLanguageDrawableResources(fishCardList.nativeLanguage)
                 _foreignFlagResource.value =
                     languageManager.getLanguageDrawableResources(fishCardList.foreignLanguage)
+
+                foreignLanguageId = fishCardList.foreignLanguage
 
                 if (_listSize < 3) {
                     _listEmpty.value = true
@@ -164,7 +181,12 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
             val updatedWord = currentWord.apply { goodAnswers++ }
             fishCardViewModel.updateWord(updatedWord)
 
-        } else { Log.e(TAG, "word with index: ${_wordIndex.value} and listSize $_listSize shouldn't be null") }
+        } else {
+            Log.e(
+                TAG,
+                "word with index: ${_wordIndex.value} and listSize $_listSize shouldn't be null"
+            )
+        }
 
         nextWord()
     }
@@ -177,12 +199,25 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
             val updatedWord = currentWord.apply { badAnswers++ }
             fishCardViewModel.updateWord(updatedWord)
 
-        } else { Log.e(TAG, "word with index: ${_wordIndex.value} and listSize $_listSize shouldn't be null") }
+        } else {
+            Log.e(
+                TAG,
+                "word with index: ${_wordIndex.value} and listSize $_listSize shouldn't be null"
+            )
+        }
 
         nextWord()
     }
 
     fun nextWord() {
+
+
+        if (wordIndex.value == listSize) {
+            _listFinished.value = true
+            return
+        } else if (wordIndex.value == listSize - 1) {
+            _nextWordBntText.value = finishedText
+        }
 
         if (_showWithTranslate.value == false && !isNextWordByOrientationChange) {
             hideTranslation()

@@ -21,6 +21,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.applications.fishcardroomandmvvm.R
+import com.applications.fishcardroomandmvvm.SpeechManager
 import com.applications.fishcardroomandmvvm.adapters.TranslationRecyclerViewAdapter
 import com.applications.fishcardroomandmvvm.databinding.FragmentLearnContentBinding
 import com.applications.fishcardroomandmvvm.viewModels.FragmentLearnViewModel
@@ -46,6 +47,7 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
     private lateinit var binding: FragmentLearnContentBinding
     private lateinit var mViewModel: FragmentLearnViewModel
 
+    private lateinit var  speechManager: SpeechManager
 
     private val updateListener = ValueAnimator.AnimatorUpdateListener { animator ->
 
@@ -92,7 +94,7 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
 
         val listId = requireArguments().getInt(ARG_LIST_ID)
 
-
+        speechManager = SpeechManager(requireContext())
 
         binding = DataBindingUtil.inflate(
             layoutInflater,
@@ -132,6 +134,15 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
         }
 
 
+        mViewModel.listFinished.observe(viewLifecycleOwner){ listFinished ->
+            if(listFinished){
+                events?.onListFinished()
+            }
+        }
+
+        mViewModel.nextWordBntText.observe(viewLifecycleOwner){ text ->
+            if(text.isNotEmpty()) binding.nextWord.text = text
+        }
 
         mViewModel.currentWord.observe(viewLifecycleOwner) { word ->
             val wordInNative = word.word
@@ -293,6 +304,9 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
 
     override fun onItemClick(text: String) {
         Log.d(TAG, "Translation: $text clicked")
+
+        speechManager.setLanguage(mViewModel.foreignLanguageId)
+        speechManager.sayText(text)
 
     }
 

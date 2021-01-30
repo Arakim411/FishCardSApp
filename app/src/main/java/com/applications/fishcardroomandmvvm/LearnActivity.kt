@@ -160,7 +160,7 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
     }
 
     override fun onListFinished() {
-
+        finish()
     }
 
     override fun onListEmpty() {
