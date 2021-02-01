@@ -201,15 +201,6 @@ class FragmentAddWord : Fragment() {
 
     }
 
-    override fun onAttachFragment(childFragment: Fragment) {
-        if(childFragment is AddFragmentEvents) {
-
-            addFragmentEvents = childFragment
-        } else throw error(" childFragment: $childFragment  must implement AddFragmentEvents")
-
-        super.onAttachFragment(childFragment)
-    }
-
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         Log.d(TAG,"view was restored")

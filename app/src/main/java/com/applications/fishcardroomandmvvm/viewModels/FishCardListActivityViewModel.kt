@@ -5,6 +5,7 @@ import android.view.View
 import androidx.lifecycle.*
 import com.applications.fishcardroomandmvvm.R
 import com.applications.fishcardroomandmvvm.ROOM.model.FishCardList
+import com.applications.fishcardroomandmvvm.ROOM.model.Word
 import com.applications.fishcardroomandmvvm.dataClasses.BottomSheetItem
 import com.applications.fishcardroomandmvvm.fragments.FragmentWordsList
 import com.applications.fishcardroomandmvvm.listeners.FabListener

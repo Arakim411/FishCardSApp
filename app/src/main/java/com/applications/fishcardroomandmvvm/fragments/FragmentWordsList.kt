@@ -2,6 +2,8 @@
 
 package com.applications.fishcardroomandmvvm.fragments
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +14,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.applications.fishcardroomandmvvm.FishListActivity
 import com.applications.fishcardroomandmvvm.R
 import com.applications.fishcardroomandmvvm.ROOM.model.FishCardList
 import com.applications.fishcardroomandmvvm.ROOM.model.Word
@@ -20,19 +23,21 @@ import com.applications.fishcardroomandmvvm.customViews.ChoiceWindow
 import com.applications.fishcardroomandmvvm.dataClasses.ChoiceViewItem
 import com.applications.fishcardroomandmvvm.databinding.FragmentWordsListBinding
 import com.applications.fishcardroomandmvvm.listeners.FabListener
+import com.applications.fishcardroomandmvvm.listeners.FishListActivityListener
 import com.applications.fishcardroomandmvvm.listeners.WordRecyclerViewListener
 import com.applications.fishcardroomandmvvm.viewModels.FragmentWordsViewModel
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 private const val ARG_FISH_LIST = "ARG_FISH_LIST"
 const val TAG_ADD_FRAGMENT = "TAG_ADD_FRAGMENT"
+const val TAG_EDIT_FRAGMENT = "TAG_EDIT_FRAGMENT"
 
 private const val ITEM_EDIT_ID = 0
 private const val ITEM_REMOVE_ID = 1
 
 
 class FragmentWordsList : Fragment(), FabListener, FragmentAddWord.AddFragmentEvents,
-    WordRecyclerViewListener {
+    WordRecyclerViewListener, EditFragment.EditFragmentEvents {
 
     private lateinit var mViewModel: FragmentWordsViewModel
     private lateinit var binding: FragmentWordsListBinding
@@ -42,6 +47,8 @@ class FragmentWordsList : Fragment(), FabListener, FragmentAddWord.AddFragmentEv
     private lateinit var itemRemove: ChoiceViewItem
 
     private val listChoiceItems = ArrayList<ChoiceViewItem>()
+
+    private var fishListActivityListener: FishListActivityListener? = null
 
 
     override fun onCreateView(
@@ -65,6 +72,7 @@ class FragmentWordsList : Fragment(), FabListener, FragmentAddWord.AddFragmentEv
         listChoiceItems.add(itemRemove)
 
 
+
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_words_list, container,
@@ -83,21 +91,42 @@ class FragmentWordsList : Fragment(), FabListener, FragmentAddWord.AddFragmentEv
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        val getWordsObserver = Observer<List<Word>> { wordsList ->
+        val wordsObserver = Observer<List<Word>> { wordsList ->
 
             adapter.setData(wordsList)
             if (wordsList.isEmpty()) binding.info.visibility =
                 View.INVISIBLE else binding.info.visibility = View.VISIBLE
         }
 
-        mViewModel.getWords().observe(viewLifecycleOwner,getWordsObserver)
+        mViewModel.getWords().observe(viewLifecycleOwner, wordsObserver)
 
+        mViewModel.showEditFragment.observe(viewLifecycleOwner) { word ->
+
+            val editFragment = childFragmentManager.findFragmentByTag(TAG_EDIT_FRAGMENT)
+
+            if (word != null && editFragment == null) {
+                childFragmentManager.beginTransaction().replace(
+                    binding.container.id,
+                    EditFragment.newInstance(
+                        word,
+                        mViewModel.fishCardList.nativeLanguage,
+                        mViewModel.fishCardList.foreignLanguage
+                    ),
+                    TAG_EDIT_FRAGMENT
+                ).commit()
+
+            }
+        }
 
         mViewModel.showToast.observe(viewLifecycleOwner) { toastMessage ->
             if (toastMessage.isNotEmpty()) {
                 Toast.makeText(requireContext(), toastMessage, Toast.LENGTH_SHORT).show()
                 mViewModel.resetToastMessage()
             }
+        }
+
+        mViewModel.fabIcon.observe(viewLifecycleOwner) { drawable ->
+            fishListActivityListener?.setFacIcon(drawable)
         }
 
         mViewModel.performAction.observe(viewLifecycleOwner) { action ->
@@ -148,7 +177,7 @@ class FragmentWordsList : Fragment(), FabListener, FragmentAddWord.AddFragmentEv
         mViewModel.onFabClicked(fab)
     }
 
-
+    //FRAGMENT ADD WORD
     override fun fragmentRemovedByUser(fragment: Fragment) {
         childFragmentManager.beginTransaction().remove(fragment).commit()
         mViewModel.onAddFragmentRemovedByUser()
@@ -179,9 +208,23 @@ class FragmentWordsList : Fragment(), FabListener, FragmentAddWord.AddFragmentEv
 
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        if (context is FishListActivityListener) {
+            fishListActivityListener = context
+        } else throw error("$context must implement FishListActivityListener")
+
+    }
+
     override fun onSaveInstanceState(outState: Bundle) {
         mViewModel.choiceWindow.value = null
         super.onSaveInstanceState(outState)
+    }
+
+    //EDIT FRAGMENT
+    override fun onFragmentCloseByUser() {
+        mViewModel.resetFab()
     }
 
 }

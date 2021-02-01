@@ -152,7 +152,7 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
                 _isDataLoaded.value = true
                 _toolBarTitle.value = fishCardList.name
-                _listSize = words.size
+                _listSize = words.size -1
 
                 val languageManager = LanguageManager(getApplication())
                 _nativeFlagResource.value =
@@ -162,7 +162,7 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
 
                 foreignLanguageId = fishCardList.foreignLanguage
 
-                if (_listSize < 3) {
+                if (_listSize+1 < 3) {
                     _listEmpty.value = true
                 }
                 nextWord()
@@ -212,10 +212,10 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     fun nextWord() {
 
 
-        if (wordIndex.value == listSize) {
+        if (wordIndex.value == listSize+1) {
             _listFinished.value = true
             return
-        } else if (wordIndex.value == listSize - 1) {
+        } else if (wordIndex.value == listSize) {
             _nextWordBntText.value = finishedText
         }
 

@@ -12,7 +12,7 @@ private const val TAG = "SpeechManager"
 
 class SpeechManager(val context: Context) :
     TextToSpeech(context, TextToSpeech.OnInitListener { status ->
-        if (status != SUCCESS) Log.e(TAG, "status in SpeechManager is not SUCCESS")
+        if (status != SUCCESS) Log.e(TAG, "status in SpeechManager: $status")
     }) {
 
     private var language: Int = LANG_MISSING_DATA

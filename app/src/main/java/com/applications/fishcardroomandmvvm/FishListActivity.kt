@@ -3,6 +3,7 @@
 package com.applications.fishcardroomandmvvm
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,6 +16,8 @@ import com.applications.fishcardroomandmvvm.customViews.BOTTOM_SHEET_ITEMS_ID
 import com.applications.fishcardroomandmvvm.customViews.BottomSheet
 import com.applications.fishcardroomandmvvm.databinding.ActivityFishListBinding
 import com.applications.fishcardroomandmvvm.dialogs.*
+import com.applications.fishcardroomandmvvm.fragments.FragmentWordsList
+import com.applications.fishcardroomandmvvm.listeners.FishListActivityListener
 import com.applications.fishcardroomandmvvm.viewModels.FishCardListActivityViewModel
 import com.applications.fishcardroomandmvvm.viewModels.NOT_START
 import com.applications.fishcardroomandmvvm.viewModels.TYPE_LEARN_SPELLING
@@ -28,10 +31,11 @@ private const val TAG = "FishActivity"
 
 @Suppress("DEPRECATION")
 class FishListActivity : AppCompatActivity(), RenameDialog.UpdateListEvent, AppDialog.DialogEvents,
-    BottomSheet.BottomSheetEvents {
+    BottomSheet.BottomSheetEvents, FishListActivityListener {
 
     private lateinit var binding: ActivityFishListBinding
     private lateinit var mViewModel: FishCardListActivityViewModel
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -165,6 +169,10 @@ class FishListActivity : AppCompatActivity(), RenameDialog.UpdateListEvent, AppD
 
     override fun onBottomItemClick(id: Int) {
             mViewModel.onBottomItemClick(id)
+    }
+
+    override fun setFacIcon(drawable: Drawable) {
+        binding.floating.setImageDrawable(drawable)
     }
 
 

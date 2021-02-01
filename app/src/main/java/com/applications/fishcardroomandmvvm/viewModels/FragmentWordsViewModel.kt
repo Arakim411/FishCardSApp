@@ -3,6 +3,8 @@ package com.applications.fishcardroomandmvvm.viewModels
 
 
 import android.app.Application
+import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -11,8 +13,10 @@ import com.applications.fishcardroomandmvvm.R
 import com.applications.fishcardroomandmvvm.ROOM.model.FishCardList
 import com.applications.fishcardroomandmvvm.ROOM.model.Word
 import com.applications.fishcardroomandmvvm.customViews.ChoiceWindow
+import com.applications.fishcardroomandmvvm.fragments.EditFragment
 import com.applications.fishcardroomandmvvm.fragments.FragmentAddWord
 import com.applications.fishcardroomandmvvm.fragments.TAG_ADD_FRAGMENT
+import com.applications.fishcardroomandmvvm.fragments.TAG_EDIT_FRAGMENT
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 
@@ -22,7 +26,7 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
     //fab
     private val fabConfirmIcon = application.getDrawable(R.drawable.ic_baseline_check_24)
     private val fabOutPutIcon = application.getDrawable(R.drawable.ic_add)
-    private var _fab: FloatingActionButton? = null
+
 
     lateinit var childFragmentManager: FragmentManager
 
@@ -44,7 +48,13 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
 
      val choiceWindow = MutableLiveData<ChoiceWindow?>()
 
+    private val _showEditFragment = MutableLiveData<Word?>()
+    val showEditFragment: LiveData<Word?>
+        get() = _showEditFragment
 
+    private val _fabIcon = MutableLiveData<Drawable>()
+    val fabIcon: LiveData<Drawable>
+    get() = _fabIcon
 
     init {
         _performAction.value = PerformAction.PERFORM_NONE
@@ -53,7 +63,6 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
 
 
     fun onFabClicked(fab: FloatingActionButton) {
-        _fab = fab
 
         when (fabNextAction) {
 
@@ -61,7 +70,7 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
 
                 _performAction.value = PerformAction.PERFORM_SHOW_WINDOW_ADD_WORD
                 fabNextAction = FabAction.ADD_WORD
-                _fab?.setImageDrawable(fabConfirmIcon)
+                _fabIcon.value = fabConfirmIcon
             }
 
             FabAction.ADD_WORD -> {
@@ -84,6 +93,19 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
 
             FabAction.SAVE_EDIT -> {
 
+
+                val editWordFragment = childFragmentManager.findFragmentByTag(TAG_EDIT_FRAGMENT) as EditFragment
+
+                    val updatedWord = editWordFragment.getUpdatedWord()
+
+                if(updatedWord == null){
+                    _showToast.value = "Make correct changes"
+                }else{
+                    fishCardViewModel.updateWord(updatedWord)
+                    childFragmentManager.beginTransaction().remove(editWordFragment).commit()
+                    _showToast.value = "Word Updated"
+                    resetFab()
+                }
             }
 
             else -> {}
@@ -94,9 +116,10 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
 
     fun getWords(): LiveData<List<Word>> = fishCardViewModel.getWordsByListId(fishCardList.id)
 
-    private fun resetFab() {
+     fun resetFab() {
         fabNextAction = FabAction.SHOW_WINDOW_ADD_WORD
-        _fab?.setImageDrawable(fabOutPutIcon)
+       _fabIcon.value = fabOutPutIcon
+
     }
 
 
@@ -118,7 +141,9 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun editWord(word: Word){
-     _showToast.value = "Not implemented yet"
+    _showEditFragment.value = word
+        fabNextAction = FabAction.SAVE_EDIT
+     _fabIcon.value = fabConfirmIcon
     }
 
 
@@ -140,6 +165,7 @@ class FragmentWordsViewModel(application: Application) : AndroidViewModel(applic
     fun resetToastMessage() {
         _showToast.value = ""
     }
+
 
 
 }
