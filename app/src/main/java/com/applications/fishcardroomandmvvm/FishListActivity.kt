@@ -21,12 +21,11 @@ import com.applications.fishcardroomandmvvm.listeners.FishListActivityListener
 import com.applications.fishcardroomandmvvm.viewModels.FishCardListActivityViewModel
 import com.applications.fishcardroomandmvvm.viewModels.NOT_START
 import com.applications.fishcardroomandmvvm.viewModels.TYPE_LEARN_SPELLING
+import com.applications.fishcardroomandmvvm.viewModels.TYPE_LEARN_WORDS
 import com.applications.fishcardroomandmvvm.viewModels.viewModelFactorys.FishCardListActivityViewModelFactory
 import kotlinx.android.synthetic.main.activity_fish_list.*
 
 private const val TAG = "FishActivity"
-
-
 
 
 @Suppress("DEPRECATION")
@@ -35,7 +34,6 @@ class FishListActivity : AppCompatActivity(), RenameDialog.UpdateListEvent, AppD
 
     private lateinit var binding: ActivityFishListBinding
     private lateinit var mViewModel: FishCardListActivityViewModel
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -100,80 +98,89 @@ class FishListActivity : AppCompatActivity(), RenameDialog.UpdateListEvent, AppD
             mViewModel.setLoadAsNone()
         }
 
-        mViewModel.startLearnActivity.observe(this){ id ->
-            if(id != NOT_START) {
-                if(id == TYPE_LEARN_SPELLING){
-                    Toast.makeText(this,"not implemented yet",Toast.LENGTH_SHORT).show()
+        mViewModel.startLearnActivity.observe(this) { id ->
+            if (id != NOT_START) {
+                if (id == TYPE_LEARN_SPELLING) {
+
+                    val intent = Intent(this, LearnActivity::class.java)
+                    intent.putExtra(LEARN_EXTRA_TYPE, id)
+                    intent.putExtra(LEARN_EXTRA_LIST_ID, mViewModel.fishCardList.id)
+                    startActivity(intent)
+                    mViewModel.resetActivityStarting()
+
+                } else if (id == TYPE_LEARN_WORDS) {
+                    val intent = Intent(this, LearnActivity::class.java)
+                    intent.putExtra(LEARN_EXTRA_TYPE, id)
+                    intent.putExtra(LEARN_EXTRA_LIST_ID, mViewModel.fishCardList.id)
+                    startActivity(intent)
+                    mViewModel.resetActivityStarting()
                 }
-                val intent = Intent(this, LearnActivity::class.java)
-                intent.putExtra(LEARN_EXTRA_TYPE, id)
-                intent.putExtra(LEARN_EXTRA_LIST_ID,mViewModel.fishCardList.id)
-                startActivity(intent)
-                mViewModel.resetActivityStarting()
             }
+        }
+    }
 
+
+        override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+            menuInflater.inflate(R.menu.fish_list_menu, menu)
+            return super.onCreateOptionsMenu(menu)
         }
 
-    }
 
+        override fun onOptionsItemSelected(item: MenuItem): Boolean {
+            when (item.itemId) {
+                R.id.app_bar_fish_list_start_learn -> {
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.fish_list_menu, menu)
-        return super.onCreateOptionsMenu(menu)
-    }
+                    val bottomSheet = BottomSheet()
+                    bottomSheet.arguments = Bundle().apply {
+                        putParcelableArrayList(
+                            BOTTOM_SHEET_ITEMS_ID,
+                            mViewModel.getBottomSheetItems()
+                        )
+                    }
 
+                    bottomSheet.show(supportFragmentManager, null)
+                }
+                R.id.app_bar_fish_list_home -> {
+                    finish()
+                }
+                R.id.app_bar_fish_list_statistics -> {
+                }
+                R.id.app_bar_fish_list_rename -> {
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.app_bar_fish_list_start_learn -> {
+                    RenameDialog.newInstance(mViewModel.fishCardList)
+                        .show(supportFragmentManager, null)
+                }
+                R.id.app_bar_fish_list_delete -> {
 
-                val bottomSheet = BottomSheet()
-                bottomSheet.arguments = Bundle().apply {
-                    putParcelableArrayList(BOTTOM_SHEET_ITEMS_ID, mViewModel.getBottomSheetItems())
+                    mViewModel.showDeleteDialog()
                 }
 
-                bottomSheet.show(supportFragmentManager, null)
             }
-            R.id.app_bar_fish_list_home -> {
-                finish()
-            }
-            R.id.app_bar_fish_list_statistics -> {
-            }
-            R.id.app_bar_fish_list_rename -> {
+            return super.onOptionsItemSelected(item)
+        }
 
-                RenameDialog.newInstance(mViewModel.fishCardList).show(supportFragmentManager, null)
-            }
-            R.id.app_bar_fish_list_delete -> {
 
-                mViewModel.showDeleteDialog()
+        override fun updateList(fishCardList: FishCardList) {
+            mViewModel.updateListDatabase(fishCardList)
+        }
+
+        override fun onPositiveDialogResult(dialogId: Int) {
+            when (dialogId) {
+                DIALOG_ID_DELETE -> {
+                    mViewModel.deleteCurrentList()
+                    finish()
+                }
             }
 
         }
-        return super.onOptionsItemSelected(item)
-    }
 
-
-    override fun updateList(fishCardList: FishCardList) {
-        mViewModel.updateListDatabase(fishCardList)
-    }
-
-    override fun onPositiveDialogResult(dialogId: Int) {
-        when (dialogId) {
-            DIALOG_ID_DELETE -> {
-                mViewModel.deleteCurrentList()
-                finish()
-            }
-        }
-
-    }
-
-    override fun onBottomItemClick(id: Int) {
+        override fun onBottomItemClick(id: Int) {
             mViewModel.onBottomItemClick(id)
+        }
+
+        override fun setFacIcon(drawable: Drawable) {
+            binding.floating.setImageDrawable(drawable)
+        }
+
+
     }
-
-    override fun setFacIcon(drawable: Drawable) {
-        binding.floating.setImageDrawable(drawable)
-    }
-
-
-}

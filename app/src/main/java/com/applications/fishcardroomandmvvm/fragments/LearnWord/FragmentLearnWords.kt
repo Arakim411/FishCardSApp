@@ -284,12 +284,10 @@ class FragmentLearnContent : Fragment(), TranslationRecyclerViewAdapter.Translat
             events = context
 
         if (events == null) throw error("$context mustImplement LearnFragmentEvents")
-
-
     }
 
     companion object {
-        fun getInstance(listId: Int) = FragmentLearnContent().apply {
+        fun newInstance(listId: Int) = FragmentLearnContent().apply {
             arguments = Bundle().apply {
                 putInt(ARG_LIST_ID, listId)
             }

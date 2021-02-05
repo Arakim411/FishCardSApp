@@ -13,14 +13,18 @@ import androidx.lifecycle.ViewModelProviders
 import com.applications.fishcardroomandmvvm.databinding.ActivityLearnBinding
 import com.applications.fishcardroomandmvvm.fragments.LearnWord.FragmentLearnContent
 import com.applications.fishcardroomandmvvm.fragments.LearnWord.FragmentWordsOptions
+import com.applications.fishcardroomandmvvm.fragments.SpellingWord.FragmentSpelling
+import com.applications.fishcardroomandmvvm.fragments.SpellingWord.FragmentSpellingOptions
 import com.applications.fishcardroomandmvvm.viewModels.LearnViewModel
 import com.applications.fishcardroomandmvvm.viewModels.NOT_START
+import com.applications.fishcardroomandmvvm.viewModels.TYPE_LEARN_SPELLING
 import com.applications.fishcardroomandmvvm.viewModels.TYPE_LEARN_WORDS
 import com.applications.fishcardroomandmvvm.viewModels.viewModelFactorys.LearnViewModelFactory
 import kotlinx.android.synthetic.main.activity_learn.*
 
 private const val TAG = "LearnActivity"
-private const val OPTIONS_FRAGMENT_TAG = "OPTIONS_FRAGMENT"
+private const val OPTIONS_WORD_FRAGMENT_TAG = "WORDS_FRAGMENT"
+private const val OPTIONS_SPELLING_FRAGMENT_TAG = "SPELLING_FRAGMENT"
 const val LIST_ERROR = -1
 
 class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEvents {
@@ -42,7 +46,7 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
         if (type == NOT_START) throw error("BAD TYPE")
         if (listId == LIST_ERROR) throw error("NO LIST ID")
 
-
+        Log.d(TAG,"learn type: $type")
 
         binding = ActivityLearnBinding.bind(learn_root)
         setSupportActionBar(binding.toolbarLearn)
@@ -78,9 +82,9 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
             }
         }
 
-        mViewModel.showOptions.observe(this) { value ->
+        mViewModel.showWordOptions.observe(this) { value ->
 
-            val fragment = supportFragmentManager.findFragmentByTag(OPTIONS_FRAGMENT_TAG)
+            val fragment = supportFragmentManager.findFragmentByTag(OPTIONS_WORD_FRAGMENT_TAG)
 
             if (value) {
 
@@ -89,7 +93,7 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
                     Log.d(TAG, "show options fragment")
                     supportFragmentManager.beginTransaction().add(
                         R.id.fragment_learn_host, FragmentWordsOptions(),
-                        OPTIONS_FRAGMENT_TAG
+                        OPTIONS_WORD_FRAGMENT_TAG
                     ).commit()
 
                 } else Log.e(TAG, "fragment is already added, message should be visible only when device is rotating ")
@@ -103,14 +107,36 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
             }
         }
 
+        mViewModel.showSpellingOptions.observe(this){ value ->
+
+            val fragment = supportFragmentManager.findFragmentByTag(OPTIONS_SPELLING_FRAGMENT_TAG)
+
+            if(value){
+
+                if(fragment == null){
+                    supportFragmentManager.beginTransaction().add(R.id.fragment_learn_host, FragmentSpellingOptions(),
+                        OPTIONS_SPELLING_FRAGMENT_TAG).commit()
+                }
+
+            }else{
+                if(fragment != null){
+                    supportFragmentManager.beginTransaction().remove(fragment).commit()
+                }
+            }
+
+        }
+
         mViewModel.currentFragment.observe(this){ currentFragment ->
 
             when(currentFragment){
 
-                LearnViewModel.CurrentFragment.FRAGMENT_LEARN_CONTENT -> {
-                    supportFragmentManager.beginTransaction().replace(binding.fragmentLearnHost.id,FragmentLearnContent.getInstance(listId)).commit()
-                }
+                LearnViewModel.CurrentFragment.FRAGMENT_LEARN_CONTENT -> supportFragmentManager.beginTransaction().replace(binding.fragmentLearnHost.id,FragmentLearnContent.newInstance(listId)).commit()
+
+                LearnViewModel.CurrentFragment.FRAGMENT_SPELLING -> supportFragmentManager.beginTransaction().replace(binding.fragmentLearnHost.id,
+                    FragmentSpelling.newInstance(listId)).commit()
+
                 LearnViewModel.CurrentFragment.FRAGMENT_SUMMARY -> {}
+
                 LearnViewModel.CurrentFragment.NONE ->  return@observe
             }
             mViewModel.currentFragmentReset()
@@ -124,7 +150,12 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
         return when (item.itemId) {
             R.id.words_options -> {
 
-                mViewModel.optionsIconClicked()
+                mViewModel.optionsWordIconClicked()
+                true
+            }
+
+            R.id.spelling_options ->{
+                mViewModel.optionsSpellingIconClicked()
                 true
             }
 
@@ -136,6 +167,8 @@ class LearnActivity : AppCompatActivity(), FragmentLearnContent.LearnFragmentEve
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         when (mViewModel.type) {
             TYPE_LEARN_WORDS -> menuInflater.inflate(R.menu.menu_learn_words, menu)
+
+            TYPE_LEARN_SPELLING -> {menuInflater.inflate(R.menu.menu_spelling,menu)}
         }
         return true
     }

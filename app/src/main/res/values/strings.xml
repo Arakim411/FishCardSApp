@@ -57,6 +57,8 @@
     <string name="hide">Hide</string>
     <string name="list_will_be_random">At next learning, list will be random</string>
     <string name="list_normal_order">At next learning, list will be in normal order</string>
+    <string name="random_list">Random list</string>
+    <string name="show_hint">Show hint during writing</string>
 
 
 </resources>

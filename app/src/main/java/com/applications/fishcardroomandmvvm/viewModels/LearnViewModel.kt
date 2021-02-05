@@ -17,9 +17,13 @@ class LearnViewModel(application: Application, val type: Int) : AndroidViewModel
 
     //MutableLiveData
 
-    private val _showOptions = MutableLiveData<Boolean>()
-    val showOptions: LiveData<Boolean>
-        get() = _showOptions
+    private val _showWordOptions = MutableLiveData<Boolean>()
+    val showWordOptions: LiveData<Boolean>
+        get() = _showWordOptions
+
+    private val _showSpellingOptions = MutableLiveData<Boolean>()
+    val showSpellingOptions: LiveData<Boolean>
+        get() = _showSpellingOptions
 
     private val _toolBarAction = MutableLiveData<ToolbarActions>()
     val toolbarAction: LiveData<ToolbarActions>
@@ -37,19 +41,25 @@ class LearnViewModel(application: Application, val type: Int) : AndroidViewModel
 
     init {
 
-        managerWords =
-            if (type == TYPE_LEARN_WORDS) Manager.getLearnActivityManager(application.baseContext)
-            else null
-        //TODO throw error when we don't know type
+        managerWords = if (type == TYPE_LEARN_WORDS) Manager.getLearnManager(application.baseContext) else null
 
-        _showOptions.value = false
+
+        _showWordOptions.value = false
+        _showSpellingOptions.value = false
+
         _toolBarAction.value = ToolbarActions.DEFAULT_TITLE
+
+        if(type == TYPE_LEARN_WORDS)
         _currentFragment.value = CurrentFragment.FRAGMENT_LEARN_CONTENT
+
+        if(type == TYPE_LEARN_SPELLING)
+            _currentFragment.value = CurrentFragment.FRAGMENT_SPELLING
+
     }
 
     //options events
-    fun optionsIconClicked() {
-        if (_showOptions.value == true) {
+    fun optionsWordIconClicked() {
+        if (_showWordOptions.value == true) {
             eventHideOptions()
         } else {
             //_showOptions.value = false
@@ -57,19 +67,41 @@ class LearnViewModel(application: Application, val type: Int) : AndroidViewModel
         }
     }
 
+    fun optionsSpellingIconClicked() {
+        if (_showSpellingOptions.value == true) {
+            eventHideOptions()
+        } else {
+            eventShowOptions()
+        }
+    }
+
+
+
     fun currentFragmentReset(){
         _currentFragment.value = CurrentFragment.NONE
     }
 
     private fun eventShowOptions() {
         Log.d(TAG,"event showOptions")
-        _showOptions.value = true
+
+        when(type){
+            TYPE_LEARN_WORDS ->  _showWordOptions.value = true
+
+            TYPE_LEARN_SPELLING -> _showSpellingOptions.value = true
+        }
+
         _toolBarAction.value = ToolbarActions.ACTION_OPTIONS
     }
 
      fun eventHideOptions() {
         Log.d(TAG,"eventHideOptions")
-        _showOptions.value = false
+
+         when(type){
+             TYPE_LEARN_WORDS ->  _showWordOptions.value = false
+
+             TYPE_LEARN_SPELLING -> _showSpellingOptions.value = false
+         }
+
          _toolBarAction.value = ToolbarActions.DEFAULT_TITLE
     }
 
@@ -79,9 +111,9 @@ class LearnViewModel(application: Application, val type: Int) : AndroidViewModel
     }
 
     enum class CurrentFragment{
-        // main fragments in this activity
         FRAGMENT_LEARN_CONTENT,
         FRAGMENT_SUMMARY,
+        FRAGMENT_SPELLING,
         NONE
     }
 

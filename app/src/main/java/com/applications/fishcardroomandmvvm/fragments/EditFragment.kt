@@ -1,5 +1,6 @@
 package com.applications.fishcardroomandmvvm.fragments
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
@@ -14,6 +15,7 @@ import com.applications.fishcardroomandmvvm.LanguageManager
 import com.applications.fishcardroomandmvvm.R
 import com.applications.fishcardroomandmvvm.ROOM.model.Word
 import com.applications.fishcardroomandmvvm.databinding.FragmentEditBinding
+import com.applications.fishcardroomandmvvm.hideKeyboard
 import com.applications.fishcardroomandmvvm.viewModels.EditFragmentViewModel
 import com.applications.fishcardroomandmvvm.viewModels.viewModelFactorys.EditFragmentViewModelFactory
 import kotlinx.android.synthetic.main.activity_main.*
@@ -75,6 +77,7 @@ class EditFragment : Fragment() {
 
         viewModel.translationList.observe(viewLifecycleOwner) { translations ->
 
+
             for (i in translations.iterator()) {
                addTranslationEditText(i)
             }
@@ -83,9 +86,8 @@ class EditFragment : Fragment() {
 
         viewModel.addTranslation.observe(viewLifecycleOwner){ value ->
 
-            if(value){
+            if(value)
                 addTranslationEditText()
-            }
         }
 
         viewModel.updatedWord.observe(viewLifecycleOwner){ word ->
@@ -94,6 +96,7 @@ class EditFragment : Fragment() {
         }
 
         viewModel.closeFragment.observe(viewLifecycleOwner){ value ->
+
             if(value) {
                 editFragmentEvents?.onFragmentCloseByUser()
                 fragmentManager?.beginTransaction()?.remove(this)?.commit()
@@ -119,8 +122,11 @@ class EditFragment : Fragment() {
         if(updatedWord.word.isEmpty())
             return  null
 
+            hideKeyboard(context as Activity)
             return  updatedWord
     }
+
+
 
 
     private fun addTranslationEditText(defaultText: String = "") {
@@ -157,6 +163,7 @@ class EditFragment : Fragment() {
         }
         return  translation
     }
+
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

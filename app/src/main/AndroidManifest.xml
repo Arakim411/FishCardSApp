@@ -9,7 +9,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FishCardRoomAndMVVM">
-        <activity android:name=".LearnActivity"></activity>
+        <activity
+            android:name=".LearnActivity"
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".FishListActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

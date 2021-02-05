@@ -24,7 +24,7 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     private val fishCardViewModel = FishCardViewModel(application)
     private lateinit var words: List<Word>
     private lateinit var fishCardList: FishCardList
-    private val manager = Manager.getLearnActivityManager(application)
+    private val manager = Manager.getLearnManager(application)
 
     private val finishedText = application.getString(R.string.home)
 
@@ -101,8 +101,10 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
         get() = _nextWordBntText
 
 
+
+
     // i don't have any idea why, but when it is in ini {} this listeners sometimes is null (after trigger sometimes)
-    val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
+   private val listener = SharedPreferences.OnSharedPreferenceChangeListener { sp, key ->
 
         Log.d(TAG, "sharedPreferences Listener with key: $key")
         when (key) {
@@ -210,7 +212,6 @@ class FragmentLearnViewModel(application: Application, val listId: Int) :
     }
 
     fun nextWord() {
-
 
         if (wordIndex.value == listSize+1) {
             _listFinished.value = true

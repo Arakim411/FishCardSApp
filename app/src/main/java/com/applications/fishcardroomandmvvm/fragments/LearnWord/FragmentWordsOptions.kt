@@ -39,8 +39,6 @@ class FragmentWordsOptions : Fragment() {
                  Toast.makeText(context,getString(R.string.list_normal_order), Toast.LENGTH_SHORT).show()
          }
 
-
-
       return  bidning.root
     }
 

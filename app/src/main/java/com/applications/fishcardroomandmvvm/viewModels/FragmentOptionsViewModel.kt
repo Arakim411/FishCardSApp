@@ -11,7 +11,7 @@ private const val TAG = "optionsFragment"
 
 class FragmentOptionsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val manager = Manager.getLearnActivityManager(application)
+    private val manager = Manager.getLearnManager(application)
 
     var showWithTranslate = manager.getShowWithTranslate()
     var saveData = manager.getSaveData()
