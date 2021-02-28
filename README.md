@@ -33,6 +33,7 @@ It is for spelling training and allows to turn on following options
 - [my custom views](https://github.com/Arakim411/FishCardsApp/tree/master/app/src/main/java/com/applications/fishcardroomandmvvm/customViews)
 
 e.g.
+
 ![image](https://user-images.githubusercontent.com/64414992/109428407-554e2600-79f7-11eb-89a6-a884caa4b529.png)
 
 
